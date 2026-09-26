@@ -5,7 +5,18 @@
 @section('content')
     <h1>Daftar Anggota</h1>
 
-    <p><a href="{{ route('members.create') }}" class="btn">+ Tambah Anggota</a></p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <a href="{{ route('members.create') }}" class="btn">+ Tambah Anggota</a>
+
+        {{-- Form Pencarian --}}
+        <form action="{{ route('members.index') }}" method="GET" style="display: flex; gap: 8px;">
+            <input type="text" name="search" placeholder="Cari nama anggota..." value="{{ request('search') }}" style="width: 250px; margin-top:0;">
+            <button type="submit" class="btn">Cari</button>
+            @if (request('search'))
+                <a href="{{ route('members.index') }}" class="btn" style="background: #6b7280;">Reset</a>
+            @endif
+        </form>
+    </div>
 
     <table>
         <thead>
@@ -48,5 +59,6 @@
         </tbody>
     </table>
 
-    <p><em>Catatan: data di atas masih data dummy (array statis di Controller). Migration &amp; Model Eloquent baru dibuat di Pertemuan 5.</em></p>
+    {{-- Mencegah parameter search hilang saat pindah halaman --}}
+    {{ $members->appends(request()->query())->links() }}
 @endsection
