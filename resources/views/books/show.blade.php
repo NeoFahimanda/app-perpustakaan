@@ -21,7 +21,7 @@
         <tr><th>Tahun Terbit</th><td>{{ $book['tahun_terbit'] }}</td></tr>
         <tr><th>ISBN</th><td>{{ $book['isbn'] ?? '-' }}</td></tr>
         <tr><th>Stok</th><td>{{ $book['stok'] }}</td></tr>
-        <tr><th>Kategori</th><td>{{ $book['kategori'] }}</td></tr>
+        <tr><th>Kategori</th><td>{{ $book['category']['nama_kategori'] }}</td></tr>
     </table>
 </body>
 </html>
