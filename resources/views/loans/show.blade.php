@@ -1,26 +1,18 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Detail Peminjaman</title>
-    <style>
-        body { font-family: sans-serif; margin: 40px; max-width: 600px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 16px; }
-        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
-        .info th { width: 160px; background: #f3f4f6; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
+
+@section('title', 'Detail Peminjaman')
+
+@section('content')
     <h1>Detail Peminjaman</h1>
     <p><a href="{{ route('loans.index') }}">&larr; Kembali ke daftar peminjaman</a></p>
 
-    <table class="info">
+    <table class="loan-info">
         <tr><th>Anggota</th><td>{{ $loan['member']['nama'] }} ({{ $loan['member']['nim'] }})</td></tr>
         <tr><th>Petugas</th><td>{{ $loan['user']['name'] }}</td></tr>
         <tr><th>Tanggal Pinjam</th><td>{{ $loan['tanggal_pinjam'] }}</td></tr>
         <tr><th>Tanggal Kembali</th><td>{{ $loan['tanggal_kembali'] }}</td></tr>
         <tr><th>Tanggal Dikembalikan</th><td>{{ $loan['tanggal_dikembalikan'] ?? '-' }}</td></tr>
-        <tr><th>Status</th><td>{{ ucfirst($loan['status']) }}</td></tr>
+        <tr><th>Status</th><td><span class="badge badge-{{ $loan['status'] }}">{{ ucfirst($loan['status']) }}</span></td></tr>
     </table>
 
     <h2>Buku yang Dipinjam</h2>
@@ -37,5 +29,4 @@
             @endforeach
         </tbody>
     </table>
-</body>
-</html>
+@endsection
