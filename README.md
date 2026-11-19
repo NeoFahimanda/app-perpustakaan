@@ -1,66 +1,105 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Aplikasi Perpustakaan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi manajemen perpustakaan berbasis Laravel 12 dengan autentikasi admin
+dan petugas, CRUD buku/anggota/peminjaman, REST API, dashboard, dan laporan.
 
-## About Laravel
+## Persyaratan
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.2 atau lebih baru beserta ekstensi Laravel yang diperlukan
+- Composer
+- Database SQLite (default) atau MySQL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Instalasi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+git clone --branch dev https://github.com/NeoFahimanda/app-perpustakaan.git
+cd app-perpustakaan
+composer install
+```
 
-## Learning Laravel
+Di PowerShell, salin konfigurasi dan buat application key:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```powershell
+Copy-Item .env.example .env
+php artisan key:generate
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+`.env.example` menggunakan SQLite (`DB_CONNECTION=sqlite`) dan telah
+mengonfigurasi locale Faker Indonesia. Jika file database belum tersedia,
+buat file `database/database.sqlite` sebelum migrasi.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Pastikan variabel berikut ada di `.env`:
 
-## Laravel Sponsors
+```dotenv
+APP_URL=http://127.0.0.1:8000
+APP_FAKER_LOCALE=id_ID
+INTERNAL_API_URL=http://127.0.0.1:8011
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Untuk memakai MySQL, sesuaikan `DB_CONNECTION`, host, nama database, username,
+dan password di `.env`, lalu buat database tersebut sebelum migrasi.
 
-### Premium Partners
+Jalankan migrasi dan isi data demo:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+php artisan migrate --seed
+```
 
-## Contributing
+Untuk membuat ulang database demo dari nol, gunakan
+`php artisan migrate:fresh --seed`. **Perintah ini menghapus semua tabel dan
+data yang ada**, jadi jangan jalankan pada database penting.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Akun demo
 
-## Code of Conduct
+Semua akun demo memiliki password `password`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role | Email |
+|---|---|
+| Admin | `admin@pens.ac.id` |
+| Petugas | `petugas1@pens.ac.id` |
+| Petugas | `petugas2@pens.ac.id` |
 
-## Security Vulnerabilities
+## Menjalankan aplikasi
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Dashboard dan laporan mengambil data melalui HTTP dari API internal. Jalankan
+dua server pada **terminal terpisah** dari direktori repository:
 
-## License
+Terminal pertama — aplikasi web:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Terminal kedua — menerima request API internal:
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8011
+```
+
+Buka `http://127.0.0.1:8000` dan login dengan akun demo. Jika port API diubah,
+perbarui `INTERNAL_API_URL` di `.env` agar menunjuk ke port server kedua.
+Tanpa server kedua, dashboard dan laporan tetap terbuka dengan pesan bahwa API
+tidak tersedia dan menampilkan data fallback.
+
+## REST API
+
+API bersifat publik sesuai cakupan praktikum dan memakai prefix `/api`:
+
+- `GET /api/books` — daftar buku, filter `judul` dan `category_id`
+- `GET /api/books/{id}` — detail buku
+- `POST /api/books` — tambah buku
+- `PUT /api/books/{id}` — perbarui buku
+- `DELETE /api/books/{id}` — hapus buku
+- `GET /api/members` dan `GET /api/members/{id}` — baca anggota
+- `GET /api/loans` — daftar peminjaman
+- `POST /api/loans` — buat transaksi
+- `PUT /api/loans/{id}/kembalikan` — catat pengembalian
+- `GET /api/stats` — statistik perpustakaan
+
+Lihat [API.md](./API.md) untuk body request dan contoh response.
+
+## Pengujian
+
+```bash
+php artisan test
+```

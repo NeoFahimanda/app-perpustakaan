@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Loan;
 use App\Models\Member;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class LoanController extends Controller
 {
@@ -14,6 +17,55 @@ class LoanController extends Controller
         $loans = Loan::with(['member', 'user', 'loanItems.book'])->paginate(10);
 
         return view('loans.index', compact('loans'));
+    }
+
+    public function report(Request $request)
+    {
+        $page = $request->validate([
+            'page' => 'sometimes|integer|min:1',
+        ])['page'] ?? 1;
+        $body = ['data' => [], 'meta' => null];
+        $apiAvailable = false;
+
+        try {
+            $response = Http::connectTimeout(2)
+                ->timeout(5)
+                ->get(config('services.internal_api.base_url').'/api/loans', [
+                    'page' => $page,
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $validResponse = is_array($data)
+                    && isset($data['data'], $data['meta'])
+                    && is_array($data['data'])
+                    && is_array($data['meta'])
+                    && isset($data['meta']['current_page'], $data['meta']['last_page'])
+                    && is_numeric($data['meta']['current_page'])
+                    && is_numeric($data['meta']['last_page']);
+
+                if ($validResponse) {
+                    $body = $data;
+                    $apiAvailable = true;
+                } else {
+                    Log::warning('Internal loans API returned an invalid response.');
+                }
+            } else {
+                Log::warning('Internal loans API request failed.', [
+                    'status' => $response->status(),
+                ]);
+            }
+        } catch (ConnectionException $exception) {
+            Log::warning('Internal loans API is unavailable.', [
+                'exception' => $exception,
+            ]);
+        }
+
+        return view('loans.report', [
+            'loans' => $body['data'],
+            'meta' => $body['meta'],
+            'apiAvailable' => $apiAvailable,
+        ]);
     }
 
     public function create()

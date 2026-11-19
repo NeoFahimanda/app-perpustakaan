@@ -12,17 +12,17 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Admin Perpustakaan',
+                'name' => 'Bambang Sutrisno',
                 'email' => 'admin@pens.ac.id',
                 'role' => 'admin',
             ],
             [
-                'name' => 'Petugas Satu',
+                'name' => 'Siti Rahmawati',
                 'email' => 'petugas1@pens.ac.id',
                 'role' => 'petugas',
             ],
             [
-                'name' => 'Petugas Dua',
+                'name' => 'Ahmad Fauzi',
                 'email' => 'petugas2@pens.ac.id',
                 'role' => 'petugas',
             ],

@@ -21,17 +21,17 @@ class AuthenticationTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'email' => 'admin@pens.ac.id',
-            'name' => 'Admin Perpustakaan',
+            'name' => 'Bambang Sutrisno',
             'role' => 'admin',
         ]);
         $this->assertDatabaseHas('users', [
             'email' => 'petugas1@pens.ac.id',
-            'name' => 'Petugas Satu',
+            'name' => 'Siti Rahmawati',
             'role' => 'petugas',
         ]);
         $this->assertDatabaseHas('users', [
             'email' => 'petugas2@pens.ac.id',
-            'name' => 'Petugas Dua',
+            'name' => 'Ahmad Fauzi',
             'role' => 'petugas',
         ]);
     }
@@ -56,11 +56,11 @@ class AuthenticationTest extends TestCase
             'password' => 'invalid-password',
         ])->assertSessionHasErrors(['email' => 'Email atau password salah.']);
 
-        $this->post(route('login'), [
+        $this->withSession(['url.intended' => null])->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
             'remember' => '1',
-        ])->assertRedirect(route('books.index'))
+        ])->assertRedirect(route('dashboard'))
             ->assertSessionHas('success');
 
         $this->assertAuthenticatedAs($user);
