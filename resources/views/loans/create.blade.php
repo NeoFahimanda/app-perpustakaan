@@ -31,16 +31,7 @@
         </select>
         @error('member_id') <div class="error">{{ $message }}</div> @enderror
 
-        <label for="user_id">Petugas</label>
-        <select name="user_id" id="user_id">
-            <option value="">-- Pilih Petugas --</option>
-            @foreach ($users as $user)
-                <option value="{{ $user['id'] }}" @selected(old('user_id') == $user['id'])>
-                    {{ $user['name'] }}
-                </option>
-            @endforeach
-        </select>
-        @error('user_id') <div class="error">{{ $message }}</div> @enderror
+        <p><em>Petugas pencatat: {{ auth()->user()->name }} (otomatis dari akun yang login).</em></p>
 
         <label for="tanggal_pinjam">Tanggal Pinjam</label>
         <input type="date" name="tanggal_pinjam" id="tanggal_pinjam" value="{{ old('tanggal_pinjam') }}">

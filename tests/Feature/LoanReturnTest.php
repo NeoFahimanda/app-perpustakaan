@@ -34,13 +34,15 @@ class LoanReturnTest extends TestCase
             'stok' => 1,
             'category_id' => $category->id,
         ]);
+        $user = User::factory()->create();
         $loan = Loan::create([
             'member_id' => $member->id,
-            'user_id' => User::factory()->create()->id,
+            'user_id' => $user->id,
             'tanggal_pinjam' => today()->toDateString(),
             'tanggal_kembali' => today()->addWeek()->toDateString(),
         ]);
         $loan->loanItems()->create(['book_id' => $book->id]);
+        $this->actingAs($user);
 
         $this->get(route('loans.index'))
             ->assertOk()
